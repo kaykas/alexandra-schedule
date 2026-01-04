@@ -26,10 +26,10 @@
             --away-bg: #F5F5F7;
             --away-text: #86868B;
 
-            /* Actions - High contrast, colorful but professional */
-            --act-pick: #007AFF;      /* Bright blue */
-            --act-drop: #34C759;      /* Green */
-            --act-receive: #FF9500;   /* Orange */
+            /* Actions - Simplified color scheme */
+            --act-pick: #34C759;      /* Green - You Pick Up */
+            --act-drop: #FF9500;      /* Orange - You Drop Off */
+            --act-receive: #86868B;   /* Gray - He Drops Off */
 
             /* TBD/Warning */
             --warning-bg: #FFF4E5;
@@ -186,9 +186,9 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .a-pick { background-color: var(--act-pick); border-left: 4px solid rgba(0, 0, 0, 0.15); }
-        .a-drop { background-color: var(--act-drop); border-left: 4px solid rgba(0, 0, 0, 0.15); }
-        .a-receive { background-color: var(--act-receive); border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-pick { background-color: var(--act-pick); color: white; border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-drop { background-color: var(--act-drop); color: white; border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-receive { background-color: var(--away-bg); color: var(--away-text); border: 1px solid var(--away-text); border-left: 4px solid var(--away-text); }
         .a-tbd { background-color: var(--warning-bg); color: var(--warning-text); border-left: 4px solid var(--warning-text); font-weight: 700; }
 
         .a-title { font-weight: 900; text-transform: uppercase; margin-bottom: 3px; font-size: 0.7rem; letter-spacing: 0.5px; }
@@ -216,6 +216,10 @@
             border-left: 4px solid var(--debug-text);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .debug-info-level {
@@ -240,6 +244,8 @@
             display: flex;
             align-items: flex-start;
             gap: 4px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .debug-info-provision::before {
