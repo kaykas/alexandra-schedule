@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOCKUP: Month Navigation - Alexandra's Schedule</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #000000;
+            --text-secondary: #6e6e73;
+            --your-action-bg: #E8F0F8;
+            --your-action-border: #3B6FA1;
+            --your-action-text: #1F3A56;
+            --their-action-bg: #E6F4F1;
+            --their-action-border: #2F7F73;
+            --their-action-text: #1E4D47;
+            --info-bg: #F3F4F6;
+            --info-text: #6B7280;
+            --away-bg: #FAFAFA;
+            --ui-accent: #3B6FA1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        /* HEADER with Month Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #E5E5EA;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sub {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .subscribe-btn {
+            background-color: var(--ui-accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .subscribe-btn:hover {
+            background-color: #2F5A8A;
+        }
+
+        /* MONTH NAVIGATION */
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--info-bg);
+            border-radius: 8px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 1px solid #D1D1D6;
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--info-bg);
+            border-color: var(--ui-accent);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .month-selector {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            padding: 8px 16px;
+            border: 2px solid var(--ui-accent);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #E5E5EA;
+        }
+
+        .l-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        /* CALENDAR */
+        .month {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border: 1px solid #E5E5EA;
+        }
+
+        .m-head {
+            background: var(--text-main);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .d-head {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #F5F5F7;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E5EA;
+        }
+
+        .d-name {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #E5E5EA;
+        }
+
+        .day {
+            background: white;
+            min-height: 160px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .is-father {
+            background-color: var(--away-bg);
+        }
+
+        .num {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .action {
+            margin-top: 5px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border-left: 3px solid transparent;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .a-pick {
+            background-color: var(--your-action-bg);
+            color: var(--your-action-text);
+            border-left-color: var(--your-action-border);
+        }
+
+        .a-drop {
+            background-color: var(--your-action-bg);
+            color: var(--your-action-text);
+            border-left-color: var(--your-action-border);
+        }
+
+        .a-receive {
+            background-color: var(--their-action-bg);
+            color: var(--their-action-text);
+            border-left-color: var(--their-action-border);
+        }
+
+        .a-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+        }
+
+        .a-time {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .a-loc {
+            font-size: 0.7rem;
+            margin-top: 3px;
+            opacity: 0.75;
+        }
+
+        .note {
+            margin-top: auto;
+            text-align: right;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--info-text);
+            padding-top: 6px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* MOCKUP BANNER */
+        .mockup-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            margin: -20px -20px 20px -20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-right {
+                justify-content: center;
+            }
+
+            .month-nav {
+                flex-wrap: wrap;
+            }
+
+            .month-selector {
+                min-width: 150px;
+                font-size: 1.1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="mockup-banner">
+    🎨 MOCKUP - Month-by-Month Navigation Concept
+</div>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <h1>Alexandra's Schedule</h1>
+            <div class="sub">Hierarchical Precedence System</div>
+        </div>
+        <div class="header-right">
+            <button class="subscribe-btn">📅 Subscribe</button>
+            <label style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+                <input type="checkbox" style="margin-right: 5px;">
+                View Court Order Source
+            </label>
+        </div>
+    </header>
+
+    <!-- MONTH NAVIGATION -->
+    <div class="month-nav">
+        <button class="nav-btn">← Previous</button>
+        <select class="month-selector">
+            <option value="2026-01">January 2026</option>
+            <option value="2026-02">February 2026</option>
+            <option value="2026-03">March 2026</option>
+            <option value="2026-04">April 2026</option>
+            <option value="2026-05">May 2026</option>
+            <option value="2026-06">June 2026</option>
+            <option value="2026-07">July 2026</option>
+            <option value="2026-08">August 2026</option>
+            <option value="2026-09">September 2026</option>
+            <option value="2026-10">October 2026</option>
+            <option value="2026-11">November 2026</option>
+            <option value="2026-12">December 2026</option>
+        </select>
+        <button class="nav-btn">Next →</button>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+        <div class="l-item">
+            <div class="dot" style="background:var(--your-action-border)"></div>
+            Your Actions
+        </div>
+        <div class="l-item">
+            <div class="dot" style="background:var(--their-action-border)"></div>
+            Their Actions
+        </div>
+        <div class="l-item" style="color: var(--info-text); font-size: 0.7rem;">
+            White = Alexandra's days • Light gray = Father's days
+        </div>
+    </div>
+
+    <!-- SINGLE MONTH CALENDAR -->
+    <div class="month">
+        <div class="m-head">January 2026</div>
+
+        <div class="d-head">
+            <div class="d-name">SUN</div>
+            <div class="d-name">MON</div>
+            <div class="d-name">TUE</div>
+            <div class="d-name">WED</div>
+            <div class="d-name">THU</div>
+            <div class="d-name">FRI</div>
+            <div class="d-name">SAT</div>
+        </div>
+
+        <div class="grid">
+            <!-- Week 1 -->
+            <div class="day is-father"></div>
+            <div class="day is-father"></div>
+            <div class="day is-father"></div>
+            <div class="day is-father">
+                <div class="num">1</div>
+                <div class="note">WINTER BREAK</div>
+            </div>
+            <div class="day is-father">
+                <div class="num">2</div>
+                <div class="action a-receive">
+                    <div class="a-title">HE DROPS OFF</div>
+                    <div class="a-time">11:00 AM</div>
+                    <div class="a-loc">@ Your Home</div>
+                </div>
+                <div class="note">WINTER BREAK</div>
+            </div>
+            <div class="day">
+                <div class="num">3</div>
+                <div class="note">WINTER BREAK</div>
+            </div>
+            <div class="day">
+                <div class="num">4</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">9:00 AM</div>
+                    <div class="a-loc">@ His Home</div>
+                </div>
+            </div>
+
+            <!-- Week 2 -->
+            <div class="day is-father">
+                <div class="num">5</div>
+                <div class="action a-drop">
+                    <div class="a-title">YOU DROP OFF</div>
+                    <div class="a-time">8:20 AM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">6</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">7</div>
+            </div>
+            <div class="day">
+                <div class="num">8</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">9</div>
+            </div>
+            <div class="day is-father">
+                <div class="num">10</div>
+                <div class="action a-drop">
+                    <div class="a-title">YOU DROP OFF</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day is-father">
+                <div class="num">11</div>
+            </div>
+
+            <!-- Week 3 -->
+            <div class="day is-father">
+                <div class="num">12</div>
+                <div class="action a-receive">
+                    <div class="a-title">HE DROPS OFF</div>
+                    <div class="a-time">5:00 PM</div>
+                    <div class="a-loc">@ Your Home</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">13</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">14</div>
+            </div>
+            <div class="day">
+                <div class="num">15</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">16</div>
+            </div>
+            <div class="day">
+                <div class="num">17</div>
+            </div>
+            <div class="day">
+                <div class="num">18</div>
+            </div>
+
+            <!-- Week 4 -->
+            <div class="day">
+                <div class="num">19</div>
+                <div class="action a-drop">
+                    <div class="a-title">YOU DROP OFF</div>
+                    <div class="a-time">5:00 PM</div>
+                    <div class="a-loc">@ His Home</div>
+                </div>
+            </div>
+            <div class="day is-father">
+                <div class="num">20</div>
+            </div>
+            <div class="day">
+                <div class="num">21</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">22</div>
+            </div>
+            <div class="day">
+                <div class="num">23</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day is-father">
+                <div class="num">24</div>
+                <div class="action a-drop">
+                    <div class="a-title">YOU DROP OFF</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day is-father">
+                <div class="num">25</div>
+            </div>
+
+            <!-- Week 5 -->
+            <div class="day is-father">
+                <div class="num">26</div>
+                <div class="action a-receive">
+                    <div class="a-title">HE DROPS OFF</div>
+                    <div class="a-time">5:00 PM</div>
+                    <div class="a-loc">@ Your Home</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">27</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">28</div>
+            </div>
+            <div class="day">
+                <div class="num">29</div>
+                <div class="action a-pick">
+                    <div class="a-title">YOU PICK UP</div>
+                    <div class="a-time">2:15 PM</div>
+                    <div class="a-loc">@ School</div>
+                </div>
+            </div>
+            <div class="day">
+                <div class="num">30</div>
+                <div class="note">5TH WEEKEND</div>
+            </div>
+            <div class="day">
+                <div class="num">31</div>
+                <div class="note">5TH WEEKEND</div>
+            </div>
+            <div class="day is-father"></div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background: var(--info-bg); border-radius: 8px; text-align: center;">
+        <h3 style="margin: 0 0 10px 0; color: var(--text-main);">Key Differences in This Mockup:</h3>
+        <ul style="text-align: left; max-width: 600px; margin: 0 auto; color: var(--text-secondary); line-height: 1.8;">
+            <li><strong>Month Navigation:</strong> Prev/Next buttons + dropdown to jump to any month</li>
+            <li><strong>Subscription Button:</strong> In header (always visible, not at bottom)</li>
+            <li><strong>Single Month View:</strong> Focus on one month at a time</li>
+            <li><strong>Cleaner Layout:</strong> Less scrolling, more focused</li>
+            <li><strong>Mobile Friendly:</strong> Navigation adapts to smaller screens</li>
+            <li><strong>Court Order Source:</strong> Toggle in header for easy access</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

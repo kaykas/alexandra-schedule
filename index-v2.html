@@ -64,20 +64,62 @@
 
         .container { max-width: 950px; margin: 0 auto; }
 
-        header { text-align: center; margin-bottom: 40px; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #E5E5EA;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         h1 {
             margin: 0;
             color: var(--text-main);
             font-weight: 700;
             letter-spacing: -0.5px;
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
+
         .sub {
             color: var(--text-secondary);
-            margin-top: 12px;
             font-weight: 500;
-            font-size: 1rem;
+            font-size: 0.85rem;
             letter-spacing: 0;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .subscribe-btn {
+            background-color: var(--ui-accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            min-height: 44px;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #2F5A8A;
         }
         .badge {
             display: inline-block; background: #00897b; color: #fff;
@@ -86,22 +128,68 @@
         }
         .badge.v2 { background: #d32f2f; }
 
-        /* Debug toggle */
-        .debug-toggle {
-            margin: 20px 0;
-            text-align: center;
-        }
+        /* Debug toggle - now in header */
         .debug-toggle label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .debug-toggle input {
-            margin-right: 8px;
             cursor: pointer;
             width: 16px;
             height: 16px;
+        }
+
+        /* MONTH NAVIGATION */
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--info-bg);
+            border-radius: 8px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 1px solid #D1D1D6;
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--ui-accent-light);
+            border-color: var(--ui-accent);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .month-selector {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            padding: 8px 16px;
+            border: 2px solid var(--ui-accent);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+            text-align: center;
         }
 
         /* LEGEND */
@@ -180,9 +268,9 @@
             box-sizing: border-box;
         }
 
-        /* DAY STATES - States do NOT get color, only subtle differentiation */
+        /* DAY STATES - Alexandra's days have subtle background, Father's are white */
         .is-mother {
-            background-color: white;
+            background-color: #F8FAFB;
         }
         .is-mother .num {
             color: var(--text-main);
@@ -191,7 +279,7 @@
         }
 
         .is-father {
-            background-color: var(--away-bg);
+            background-color: white;
         }
         .is-father .num {
             color: var(--info-text);
@@ -352,8 +440,33 @@
             body { padding: 20px 10px; }
             .container { max-width: 100%; }
 
-            h1 { font-size: 1.8rem; }
-            .sub { font-size: 0.9rem; }
+            header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-right {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            h1 { font-size: 1.6rem; }
+            .sub { font-size: 0.8rem; }
+
+            .month-nav {
+                flex-wrap: wrap;
+                padding: 12px;
+            }
+
+            .month-selector {
+                min-width: 150px;
+                font-size: 1.1rem;
+            }
+
+            .subscribe-btn {
+                font-size: 0.75rem;
+                padding: 8px 12px;
+            }
 
             .legend {
                 gap: 16px;
@@ -511,53 +624,43 @@
 
 <div class="container">
     <header>
-        <h1>Alexandra's Schedule</h1>
-        <div class="sub" id="date-range-subtitle">Loading...</div>
+        <div class="header-left">
+            <h1>Alexandra's Schedule</h1>
+            <div class="sub">Hierarchical Precedence System</div>
+        </div>
+        <div class="header-right">
+            <button class="subscribe-btn" id="copy-url-btn">📅 Subscribe</button>
+            <div class="debug-toggle">
+                <label>
+                    <input type="checkbox" id="debug-mode"> View Court Order Source
+                </label>
+            </div>
+            <input
+                type="text"
+                readonly
+                value="https://alexandra-schedule.vercel.app/api/calendar.ics"
+                id="calendar-url"
+                style="display: none;"
+            />
+        </div>
     </header>
 
-    <div class="debug-toggle">
-        <label>
-            <input type="checkbox" id="debug-mode"> View Court Order Source
-        </label>
+    <!-- MONTH NAVIGATION -->
+    <div class="month-nav">
+        <button class="nav-btn" id="prev-month">← Previous</button>
+        <select class="month-selector" id="month-selector"></select>
+        <button class="nav-btn" id="next-month">Next →</button>
     </div>
 
     <div class="legend">
         <div class="l-item"><div class="dot" style="background:var(--your-action-border)"></div> Your Actions</div>
         <div class="l-item"><div class="dot" style="background:var(--their-action-border)"></div> Their Actions</div>
         <div class="l-item" style="color: var(--info-text); font-size: 0.7rem; margin-left: 20px;">
-            White background = Alexandra's days  •  Light gray = Father's days
+            Light gray = Alexandra's days  •  White = Father's days
         </div>
     </div>
 
     <div id="calendar-root"></div>
-
-    <div style="text-align: center; margin: 40px auto 20px; padding: 20px; max-width: 500px; border-top: 1px solid var(--debug-border);">
-        <button id="copy-url-btn" style="
-            background-color: var(--ui-accent);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            min-height: 44px;
-        ">
-            📅 Copy Calendar Subscription URL
-        </button>
-        <div style="margin-top: 8px; font-size: 0.7rem; color: var(--info-text);">
-            Paste in Google Calendar, Apple Calendar, or Outlook to auto-sync
-        </div>
-        <input
-            type="text"
-            readonly
-            value="https://alexandra-schedule.vercel.app/api/calendar.ics"
-            id="calendar-url"
-            style="display: none;"
-        />
-    </div>
 </div>
 
 <script src="custody-engine.js"></script>
@@ -565,6 +668,9 @@
     // Calendar rendering using the new engine
     const root = document.getElementById('calendar-root');
     const debugCheckbox = document.getElementById('debug-mode');
+    const monthSelector = document.getElementById('month-selector');
+    const prevBtn = document.getElementById('prev-month');
+    const nextBtn = document.getElementById('next-month');
 
     // Load saved toggle state from localStorage
     let debugMode = localStorage.getItem('viewCourtOrderSource') === 'true';
@@ -574,7 +680,7 @@
         debugMode = e.target.checked;
         // Save toggle state to localStorage
         localStorage.setItem('viewCourtOrderSource', debugMode);
-        renderCalendar();
+        renderCurrentMonth();
     });
 
     // Generate months array dynamically starting from current month
@@ -611,13 +717,45 @@
     }
 
     const months = generateMonths();
+    let currentMonthIndex = 0; // Start with current month
 
-    // Update subtitle with dynamic date range
-    const firstMonth = months[0];
-    const lastMonth = months[months.length - 1];
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const subtitle = document.getElementById('date-range-subtitle');
-    subtitle.textContent = `${monthNames[firstMonth.m]} ${firstMonth.y} – ${monthNames[lastMonth.m]} ${lastMonth.y} • Hierarchical Precedence System`;
+    // Populate month selector dropdown
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = month.name;
+        monthSelector.appendChild(option);
+    });
+
+    // Month navigation event listeners
+    monthSelector.addEventListener('change', (e) => {
+        currentMonthIndex = parseInt(e.target.value);
+        renderCurrentMonth();
+        updateNavButtons();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentMonthIndex > 0) {
+            currentMonthIndex--;
+            monthSelector.value = currentMonthIndex;
+            renderCurrentMonth();
+            updateNavButtons();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentMonthIndex < months.length - 1) {
+            currentMonthIndex++;
+            monthSelector.value = currentMonthIndex;
+            renderCurrentMonth();
+            updateNavButtons();
+        }
+    });
+
+    function updateNavButtons() {
+        prevBtn.disabled = currentMonthIndex === 0;
+        nextBtn.disabled = currentMonthIndex === months.length - 1;
+    }
 
     const dNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
@@ -787,81 +925,81 @@
         return { hours, minutes };
     }
 
-    function renderCalendar() {
+    function renderCurrentMonth() {
         root.innerHTML = '';
 
-        months.forEach(cfg => {
-            const mDiv = document.createElement('div');
-            mDiv.className = 'month';
-            mDiv.innerHTML = `<div class="m-head">${cfg.name}</div>`;
+        const cfg = months[currentMonthIndex];
+        const mDiv = document.createElement('div');
+        mDiv.className = 'month';
+        mDiv.innerHTML = `<div class="m-head">${cfg.name}</div>`;
 
-            const dh = document.createElement('div');
-            dh.className = 'd-head';
-            dNames.forEach(n => dh.innerHTML += `<div class="d-name">${n}</div>`);
-            mDiv.appendChild(dh);
+        const dh = document.createElement('div');
+        dh.className = 'd-head';
+        dNames.forEach(n => dh.innerHTML += `<div class="d-name">${n}</div>`);
+        mDiv.appendChild(dh);
 
-            const grid = document.createElement('div');
-            grid.className = 'grid';
+        const grid = document.createElement('div');
+        grid.className = 'grid';
 
-            const daysInMonth = new Date(cfg.y, cfg.m + 1, 0).getDate();
-            const startDay = new Date(cfg.y, cfg.m, 1).getDay();
+        const daysInMonth = new Date(cfg.y, cfg.m + 1, 0).getDate();
+        const startDay = new Date(cfg.y, cfg.m, 1).getDay();
 
-            // Empty cells before month starts
-            for(let i=0; i<startDay; i++) {
-                grid.innerHTML += `<div class="day is-father"></div>`;
-            }
+        // Empty cells before month starts
+        for(let i=0; i<startDay; i++) {
+            grid.innerHTML += `<div class="day is-father"></div>`;
+        }
 
-            // Days of month
-            for(let d=1; d<=daysInMonth; d++) {
-                const date = new Date(cfg.y, cfg.m, d);
-                const result = window.CustodyEngine.evaluateCustody(date);
+        // Days of month
+        for(let d=1; d<=daysInMonth; d++) {
+            const date = new Date(cfg.y, cfg.m, d);
+            const result = window.CustodyEngine.evaluateCustody(date);
 
-                let html = `<div class="num">${d}</div>`;
+            let html = `<div class="num">${d}</div>`;
 
-                // Events
-                if (result.events && result.events.length > 0) {
-                    result.events.forEach(e => {
-                        let cls = 'a-pick';
-                        if(e.type === 'drop') cls = 'a-drop';
-                        if(e.type === 'receive') cls = 'a-receive';
-                        if(e.type === 'tbd') cls = 'a-tbd';
-                        html += `<div class="action ${cls}">
-                            <span class="a-title">${e.title}</span>
-                            <span class="a-time">${e.time}</span>
-                            <span class="a-loc">@ ${e.location}</span>
-                        </div>`;
-                    });
-                }
-
-                // Note
-                if(result.note) {
-                    html += `<div class="note">${result.note}</div>`;
-                }
-
-                // Debug info
-                if (debugMode) {
-                    html += `<div class="debug-info">
-                        <div class="debug-info-level">${result.levelExplanation}</div>
-                        <div class="debug-info-provision">
-                            ${result.provision}: ${result.provisionTitle}
-                        </div>
-                        <div class="debug-info-explanation">${result.provisionExplanation}</div>
+            // Events
+            if (result.events && result.events.length > 0) {
+                result.events.forEach(e => {
+                    let cls = 'a-pick';
+                    if(e.type === 'drop') cls = 'a-drop';
+                    if(e.type === 'receive') cls = 'a-receive';
+                    if(e.type === 'tbd') cls = 'a-tbd';
+                    html += `<div class="action ${cls}">
+                        <span class="a-title">${e.title}</span>
+                        <span class="a-time">${e.time}</span>
+                        <span class="a-loc">@ ${e.location}</span>
                     </div>`;
-                }
-
-                const cell = document.createElement('div');
-                cell.className = `day is-${result.parent}`;
-                cell.innerHTML = html;
-                grid.appendChild(cell);
+                });
             }
 
-            mDiv.appendChild(grid);
-            root.appendChild(mDiv);
-        });
+            // Note
+            if(result.note) {
+                html += `<div class="note">${result.note}</div>`;
+            }
+
+            // Debug info
+            if (debugMode) {
+                html += `<div class="debug-info">
+                    <div class="debug-info-level">${result.levelExplanation}</div>
+                    <div class="debug-info-provision">
+                        ${result.provision}: ${result.provisionTitle}
+                    </div>
+                    <div class="debug-info-explanation">${result.provisionExplanation}</div>
+                </div>`;
+            }
+
+            const cell = document.createElement('div');
+            cell.className = `day is-${result.parent}`;
+            cell.innerHTML = html;
+            grid.appendChild(cell);
+        }
+
+        mDiv.appendChild(grid);
+        root.appendChild(mDiv);
     }
 
     // Initial render
-    renderCalendar();
+    renderCurrentMonth();
+    updateNavButtons();
 </script>
 </body>
 </html>
