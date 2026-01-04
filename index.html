@@ -453,24 +453,64 @@
         </label>
     </div>
 
-    <div style="text-align: center; margin: 20px 0;">
-        <button id="export-calendar-btn" style="
-            background-color: var(--my-accent);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-            transition: all 0.2s ease;
-            min-height: 44px;
-        ">
-            📅 Subscribe to Google Calendar
-        </button>
-        <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary);">
-            Downloads an iCal file you can import into Google Calendar
+    <div style="text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid var(--debug-border);">
+        <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 12px;">
+            📅 Subscribe to Calendar
+        </div>
+        <div style="margin-bottom: 16px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            Get automatic updates when the schedule changes. Subscribe in your calendar app:
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto;">
+            <div>
+                <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; text-align: left;">
+                    Subscription URL:
+                </div>
+                <input
+                    type="text"
+                    readonly
+                    value="https://alexandra-schedule.vercel.app/api/calendar.ics"
+                    id="calendar-url"
+                    style="
+                        width: 100%;
+                        padding: 10px 12px;
+                        border: 1px solid var(--debug-border);
+                        border-radius: 6px;
+                        font-family: 'Monaco', 'Courier New', monospace;
+                        font-size: 0.8rem;
+                        color: var(--text-main);
+                        background: var(--debug-bg);
+                        box-sizing: border-box;
+                        cursor: text;
+                    "
+                    onclick="this.select()"
+                />
+            </div>
+            <button id="copy-url-btn" style="
+                background-color: var(--my-accent);
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+                transition: all 0.2s ease;
+                min-height: 44px;
+            ">
+                📋 Copy Subscription URL
+            </button>
+        </div>
+        <div style="margin-top: 16px; padding: 12px; background: var(--my-accent-light); border-radius: 8px; text-align: left; font-size: 0.75rem; line-height: 1.6; color: var(--text-main);">
+            <div style="font-weight: 600; margin-bottom: 6px;">How to subscribe:</div>
+            <div style="margin-left: 12px;">
+                <strong>Google Calendar:</strong> Settings → "Add calendar" → "From URL" → Paste URL<br>
+                <strong>Apple Calendar:</strong> File → "New Calendar Subscription" → Paste URL<br>
+                <strong>Outlook:</strong> Calendar → "Add calendar" → "Subscribe from web" → Paste URL
+            </div>
+            <div style="margin-top: 8px; font-style: italic; opacity: 0.8;">
+                Your calendar will automatically update when changes are made (refreshes every 1-24 hours depending on your calendar app).
+            </div>
         </div>
     </div>
 
@@ -546,7 +586,31 @@
 
     const dNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
-    // iCal Export Functionality
+    // Copy URL functionality
+    document.getElementById('copy-url-btn').addEventListener('click', () => {
+        const urlInput = document.getElementById('calendar-url');
+        urlInput.select();
+        urlInput.setSelectionRange(0, 99999); // For mobile devices
+
+        try {
+            navigator.clipboard.writeText(urlInput.value).then(() => {
+                const btn = document.getElementById('copy-url-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.backgroundColor = '#34C759';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.backgroundColor = 'var(--my-accent)';
+                }, 2000);
+            });
+        } catch (err) {
+            // Fallback for older browsers
+            document.execCommand('copy');
+            alert('Subscription URL copied to clipboard!');
+        }
+    });
+
+    // iCal Export Functionality (kept for reference, but now handled by serverless function)
     function generateICalFile() {
         const icalEvents = [];
 
@@ -687,22 +751,6 @@
 
         return { hours, minutes };
     }
-
-    function downloadICalFile() {
-        const icalContent = generateICalFile();
-        const blob = new Blob([icalContent], { type: 'text/calendar;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'alexandra-custody-schedule.ics';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
-
-    // Add event listener to export button
-    document.getElementById('export-calendar-btn').addEventListener('click', downloadICalFile);
 
     function renderCalendar() {
         root.innerHTML = '';
