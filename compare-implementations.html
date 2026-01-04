@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementation Comparison</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            margin: 20px;
+            font-size: 12px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #333; font-size: 20px; margin-bottom: 20px; }
+        .comparison {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .date-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 1fr 80px;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .date-row.header {
+            font-weight: bold;
+            background: #f9f9f9;
+            border-bottom: 2px solid #ccc;
+        }
+        .date-row.mismatch {
+            background: #ffe0e0;
+        }
+        .date-row.match {
+            background: #e0ffe0;
+        }
+        .old-impl, .new-impl { padding: 5px; }
+        .old-impl { background: #fff3cd; border-left: 3px solid #ffc107; }
+        .new-impl { background: #d1ecf1; border-left: 3px solid #0dcaf0; }
+        .status { text-align: center; font-weight: bold; }
+        .status.match { color: #28a745; }
+        .status.mismatch { color: #dc3545; }
+        .summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .summary-item {
+            display: inline-block;
+            margin-right: 30px;
+            font-weight: bold;
+        }
+        .summary-item.pass { color: #28a745; }
+        .summary-item.fail { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Old Implementation vs New Rules Engine Comparison</h1>
+        <div class="summary" id="summary"></div>
+        <div class="comparison" id="comparison"></div>
+    </div>
+
+    <script src="custody-engine.js"></script>
+    <script>
+        // Old implementation from index.html
+        const SCHOOL_START_25 = new Date(2025, 7, 11);
+        const SCHOOL_END_26 = new Date(2026, 4, 28);
+        const SUMMER_START_26 = new Date(2026, 4, 29);
+        const SUMMER_END_26 = new Date(2026, 6, 24);
+        const SCHOOL_START_26 = new Date(2026, 7, 10);
+        const ANCHOR_DATE = new Date(2025, 11, 12, 12, 0, 0);
+
+        const NO_SCHOOL = [
+            '2025-12-22','2025-12-23','2025-12-24','2025-12-25','2025-12-26',
+            '2025-12-29','2025-12-30','2025-12-31','2026-01-01','2026-01-02','2026-01-05',
+            '2026-01-19','2026-02-16','2026-04-03','2026-04-06','2026-04-07','2026-04-08',
+            '2026-04-09','2026-04-10','2026-05-25','2026-05-29'
+        ];
+
+        const NO_SCHOOL_FALL_26 = [
+            '2026-09-07', '2026-11-11',
+            '2026-11-23', '2026-11-24', '2026-11-25', '2026-11-26', '2026-11-27',
+            '2026-12-21', '2026-12-22', '2026-12-23', '2026-12-24', '2026-12-25',
+            '2026-12-28', '2026-12-29', '2026-12-30', '2026-12-31'
+        ];
+
+        const MIN_DAYS = [
+            '2025-11-10', '2025-11-11', '2025-11-13', '2025-11-14',
+            '2026-03-09', '2026-03-10', '2026-03-12', '2026-03-13',
+            '2026-05-28'
+        ];
+
+        function isSchool(date) {
+            if (date < SCHOOL_START_25) return false;
+            if (date > SCHOOL_END_26 && date < SCHOOL_START_26) return false;
+            if (date.getDay() === 0 || date.getDay() === 6) return false;
+            const iso = date.toISOString().split('T')[0];
+            if (NO_SCHOOL.includes(iso)) return false;
+            if (NO_SCHOOL_FALL_26.includes(iso)) return false;
+            return true;
+        }
+
+        function isMomsWeekend(date) {
+            let d = new Date(date);
+            d.setHours(12,0,0,0);
+            let dow = d.getDay();
+            if (dow === 6) d.setDate(d.getDate() - 1);
+            else if (dow === 0) d.setDate(d.getDate() - 2);
+            else if (dow !== 5) d.setDate(d.getDate() - ((dow + 2) % 7));
+
+            const diffTime = d - ANCHOR_DATE;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            const diffFortnights = Math.floor(diffDays / 14);
+
+            return (diffFortnights % 2 === 0);
+        }
+
+        // Simplified old implementation - just returns parent status
+        function getDayDataOld(date) {
+            const y = date.getFullYear();
+            const m = date.getMonth();
+            const d = date.getDate();
+            const day = date.getDay();
+
+            // Mother's Day
+            if (m === 4 && d === 10) return 'me';
+            if (m === 4 && d === 11) return 'me';
+
+            // Birthday
+            if (m === 9 && d === 2) return 'me';
+            if (m === 9 && d === 3) {
+                if (isMomsWeekend(date)) return 'me';
+                return 'me'; // Return day
+            }
+            if (m === 11 && d === 31) return 'away';
+
+            // Winter Break 2025
+            if (y===2025 && m===11) {
+                if(d===18) return 'me';
+                if(d===19) return 'me';
+                if(d>19 && d<22) return 'me';
+                if(d===22) return 'me';
+                if(d===25) return 'me';
+                if(d>25 && d<29) return 'me';
+                if(d===29) return 'me';
+                if(d<18) { /* Fall through */ } else return 'away';
+            }
+
+            if (y===2026 && m===0 && d<=6) {
+                if(d===1) return 'away';
+                if(d===2) return 'me';
+                if(d>2 && d<5) return 'me';
+                if(d===5) return 'me';
+                if(d===6) return 'me';
+            }
+
+            // Spring Break
+            if (y===2026 && m===3) {
+                if(d===2) return 'me';
+                if(d===3) return 'me';
+                if(d>3 && d<8) return 'me';
+                if(d===8) return 'me';
+                if(d>8 && d<=12) return 'away';
+            }
+
+            // Summer
+            if (date >= SUMMER_START_26 && date <= SUMMER_END_26) {
+                const diff = Math.floor((date - SUMMER_START_26) / (1000 * 60 * 60 * 24));
+                const weekNum = Math.floor(diff / 7) + 1;
+                const isMyCurrentWeek = [1,3,5,7].includes(weekNum);
+
+                if (m===5 && d===21) return 'away'; // Father's Day
+
+                if (isMyCurrentWeek) return 'me';
+                return 'away';
+            }
+
+            // Thanksgiving
+            if (y===2026 && m===10) {
+                if(d===20) return 'me';
+                if(d===21 || d===22) return 'me';
+                if(d>=23 && d<=24) return 'me';
+                if(d===25) return 'me';
+                if(d>=26 && d<=27) return 'away';
+            }
+
+            // Winter 2026
+            if (y===2026 && m===11) {
+                if(d===18) return 'me';
+                if(d>18 && d<26) return 'me';
+                if(d===26) return 'me';
+                if(d>26) return 'away';
+            }
+
+            // Regular schedule
+            let isMomsWknd = isMomsWeekend(date);
+
+            if (day === 1) {
+                let prevDay = new Date(date); prevDay.setDate(d-1);
+                if (isMomsWeekend(prevDay)) {
+                    return 'me';
+                }
+            }
+
+            if (day === 2) {
+                let prevDay = new Date(date); prevDay.setDate(d-1);
+                if (!isSchool(prevDay) && isMomsWeekend(prevDay)) {
+                    return 'me';
+                }
+            }
+
+            if (day === 4) return 'me';
+
+            if (day === 5) {
+                if (y===2026 && m===4 && d===29) return 'me';
+                if (isMomsWknd) {
+                    return 'me';
+                } else {
+                    return 'away';
+                }
+            }
+
+            if (day === 6 || day === 0) {
+                if (isMomsWeekend(date)) return 'me';
+                return 'away';
+            }
+
+            return 'away';
+        }
+
+        // Run comparison
+        const comparisonDiv = document.getElementById('comparison');
+        const summaryDiv = document.getElementById('summary');
+
+        let html = '<div class="date-row header">';
+        html += '<div>Date</div>';
+        html += '<div>Old Implementation</div>';
+        html += '<div>New Rules Engine</div>';
+        html += '<div>Status</div>';
+        html += '</div>';
+
+        let totalDays = 0;
+        let matches = 0;
+        let mismatches = 0;
+        const mismatchDates = [];
+
+        // Test Dec 2025 - Dec 2026
+        for (let month = 0; month < 13; month++) {
+            let y = 2025;
+            let m = 11 + month;
+            if (m > 11) {
+                y = 2026;
+                m = m - 12;
+            }
+
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(y, m, d);
+                totalDays++;
+
+                const oldResult = getDayDataOld(date);
+                const newResult = window.CustodyEngine.evaluateCustody(date);
+
+                // Map new result parent to old format
+                const newParent = newResult.parent === 'mother' ? 'me' : 'away';
+
+                const isMatch = oldResult === newParent;
+                if (isMatch) matches++; else { mismatches++; mismatchDates.push(date.toDateString()); }
+
+                const rowClass = isMatch ? 'match' : 'mismatch';
+                const statusClass = isMatch ? 'match' : 'mismatch';
+                const statusText = isMatch ? '✓' : '✗';
+
+                html += `<div class="date-row ${rowClass}">`;
+                html += `<div>${date.toDateString()}</div>`;
+                html += `<div class="old-impl">Parent: ${oldResult}</div>`;
+                html += `<div class="new-impl">Parent: ${newResult.parent}<br>Level ${newResult.matchedLevel}: ${newResult.matchedRule}</div>`;
+                html += `<div class="status ${statusClass}">${statusText}</div>`;
+                html += '</div>';
+            }
+        }
+
+        comparisonDiv.innerHTML = html;
+
+        // Summary
+        const passRate = ((matches / totalDays) * 100).toFixed(1);
+        summaryDiv.innerHTML = `
+            <div class="summary-item">Total Days: ${totalDays}</div>
+            <div class="summary-item pass">Matches: ${matches}</div>
+            <div class="summary-item fail">Mismatches: ${mismatches}</div>
+            <div class="summary-item">Pass Rate: ${passRate}%</div>
+        `;
+
+        if (mismatches > 0) {
+            summaryDiv.innerHTML += `<br><br><strong>Mismatch Dates:</strong> ${mismatchDates.join(', ')}`;
+        }
+    </script>
+</body>
+</html>
