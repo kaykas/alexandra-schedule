@@ -206,6 +206,92 @@
             flex: 1;
         }
 
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body { padding: 20px 5px; }
+            .container { max-width: 100%; }
+
+            h1 { font-size: 1.4rem; }
+            .sub { font-size: 0.8rem; }
+
+            .legend {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .l-item { font-size: 10px; }
+
+            .m-head { font-size: 1rem; padding: 12px; }
+
+            .d-name { font-size: 0.65rem; }
+
+            .day {
+                min-height: 140px;
+                padding: 6px;
+            }
+
+            .num { font-size: 1rem !important; }
+
+            .action {
+                padding: 6px;
+                font-size: 0.7rem;
+                margin-top: 4px;
+            }
+
+            .a-title { font-size: 0.65rem; }
+            .a-time { font-size: 0.8rem; }
+            .a-loc { font-size: 0.65rem; }
+
+            .note { font-size: 0.6rem; }
+
+            .debug-info {
+                padding: 6px;
+                margin-top: 8px;
+            }
+
+            .debug-info-level { font-size: 0.7rem; }
+            .debug-info-provision,
+            .debug-info-explanation { font-size: 0.63rem; }
+
+            .debug-toggle {
+                margin: 15px 0;
+            }
+
+            .debug-toggle label {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 15px 3px; }
+
+            h1 { font-size: 1.2rem; }
+            .sub { font-size: 0.75rem; }
+
+            .day {
+                min-height: 120px;
+                padding: 4px;
+            }
+
+            .action {
+                padding: 5px;
+                font-size: 0.65rem;
+            }
+
+            .a-title { font-size: 0.6rem; }
+            .a-time { font-size: 0.75rem; }
+            .a-loc { font-size: 0.6rem; }
+
+            .debug-info {
+                padding: 5px;
+            }
+
+            .debug-info-level { font-size: 0.65rem; }
+            .debug-info-provision,
+            .debug-info-explanation { font-size: 0.6rem; }
+        }
+
         @media print {
             body { background: white; padding: 0; }
             .month { break-inside: avoid; border: 1px solid #ccc; }
@@ -248,10 +334,15 @@
     // Calendar rendering using the new engine
     const root = document.getElementById('calendar-root');
     const debugCheckbox = document.getElementById('debug-mode');
-    let debugMode = false;
+
+    // Load saved toggle state from localStorage
+    let debugMode = localStorage.getItem('viewCourtOrderSource') === 'true';
+    debugCheckbox.checked = debugMode;
 
     debugCheckbox.addEventListener('change', (e) => {
         debugMode = e.target.checked;
+        // Save toggle state to localStorage
+        localStorage.setItem('viewCourtOrderSource', debugMode);
         renderCalendar();
     });
 
