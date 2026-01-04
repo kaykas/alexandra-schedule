@@ -162,15 +162,310 @@ function getPickupTime(date) {
 }
 
 /**
+ * Get provision information for a rule
+ */
+function getProvisionInfo(level, rule) {
+  const provisions = {
+    // Level 0: Super-Overrides
+    'mothers_day': {
+      provision: 'Provision 17',
+      title: "Mother's Day Override",
+      explanation: "Mother's Day always takes priority over all other custody arrangements. Mother has custody from 9:00 AM on Mother's Day until 9:00 AM the next day (or school drop-off)."
+    },
+    'mothers_day_return': {
+      provision: 'Provision 17',
+      title: "Mother's Day Return",
+      explanation: "Returning from Mother's Day custody back to regular schedule."
+    },
+    'fathers_day': {
+      provision: 'Provision 18',
+      title: "Father's Day Override",
+      explanation: "Father's Day always takes priority over all other custody arrangements. Father has custody from 9:00 AM on Father's Day until 9:00 AM the next day (or school drop-off)."
+    },
+    'mother_birthday': {
+      provision: 'Provision 17',
+      title: "Mother's Birthday Override",
+      explanation: "Your birthday always takes priority. You have custody from 9:00 AM on your birthday until 9:00 AM the next day (or school drop-off)."
+    },
+    'mother_birthday_return': {
+      provision: 'Provision 17',
+      title: "Birthday Return",
+      explanation: "Returning from birthday custody back to regular schedule."
+    },
+    'mother_birthday_weekend_continuation': {
+      provision: 'Provision 17',
+      title: "Birthday Weekend Continuation",
+      explanation: "Your birthday fell on your regular weekend, so custody continues seamlessly."
+    },
+
+    // Level 1: Fixed Winter Break Dates
+    'winter_break_2025_start': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Specific winter break schedule: Mother picks up from school on the last instruction day before break."
+    },
+    'winter_break_2025_day2': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "During the first period of winter break (Dec 18 pickup through Dec 22, 11:00 AM), Mother has custody."
+    },
+    'winter_break_2025_mother_1st': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "First custody period of winter break - Mother has custody until Dec 22 at 11:00 AM exchange."
+    },
+    'winter_break_2025_exchange_1': {
+      provision: 'Provision 16c',
+      title: "Winter Break Mid-Break Exchange",
+      explanation: "Exchange at 11:00 AM curbside at Father's home. This is one of the scheduled mid-break exchanges."
+    },
+    'winter_break_2025_father': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Father's custody period during winter break (Dec 22, 11:00 AM through Dec 25, 11:00 AM)."
+    },
+    'winter_break_2025_christmas': {
+      provision: 'Provision 16c',
+      title: "Winter Break Christmas Exchange",
+      explanation: "Father drops off at 11:00 AM on Christmas Day at Mother's home (curbside)."
+    },
+    'winter_break_2025_mother_2nd': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Mother's second custody period during winter break (Dec 25, 11:00 AM through Dec 29, 11:00 AM)."
+    },
+    'winter_break_2025_exchange_2': {
+      provision: 'Provision 16c',
+      title: "Winter Break Mid-Break Exchange",
+      explanation: "Exchange at 11:00 AM curbside at Father's home."
+    },
+    'winter_break_2025_father_nye': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Father's custody period includes New Year's Eve (Dec 29, 11:00 AM through Jan 2, 11:00 AM)."
+    },
+    'winter_break_2026_new_year': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Father has custody through New Year's Day until Jan 2 at 11:00 AM."
+    },
+    'winter_break_2026_exchange_3': {
+      provision: 'Provision 16c',
+      title: "Winter Break Final Exchange",
+      explanation: "Father drops off at 11:00 AM on Jan 2 at Mother's home (curbside). Mother has custody until school resumes."
+    },
+    'winter_break_2026_mother_final': {
+      provision: 'Provision 16c',
+      title: "Winter Break 2025/26 Schedule",
+      explanation: "Mother's final custody period of winter break, ending when school resumes."
+    },
+    'winter_break_2026_monday_extension': {
+      provision: 'Provision 12d + 16c',
+      title: "Monday Holiday Extension",
+      explanation: "Jan 5 is a PD Day (non-instruction). Per Provision 12d, Mother keeps custody until Tuesday school drop-off instead of Monday exchange."
+    },
+    'winter_break_2026_return': {
+      provision: 'Provision 16c',
+      title: "Return from Winter Break",
+      explanation: "Mother drops off at school on the first instruction day after winter break ends."
+    },
+
+    // Level 2: Recurring Holidays
+    'halloween_mother': {
+      provision: 'Provision 16a',
+      title: "Halloween (Odd Year)",
+      explanation: "On odd-numbered years (2025, 2027, etc.), Mother has Halloween custody."
+    },
+    'halloween_father': {
+      provision: 'Provision 16a',
+      title: "Halloween (Even Year)",
+      explanation: "On even-numbered years (2026, 2028, etc.), Father has Halloween custody."
+    },
+    'spring_break_2026_start': {
+      provision: 'Provision 16d',
+      title: "Spring Break 2026",
+      explanation: "Mother picks up from school on the last instruction day before Spring Break."
+    },
+    'spring_break_2026_cesar_chavez': {
+      provision: 'Provision 16d',
+      title: "Spring Break - Cesar Chavez Day",
+      explanation: "Mother has custody during Cesar Chavez Day (part of Spring Break period)."
+    },
+    'spring_break_2026_mother_half': {
+      provision: 'Provision 16d',
+      title: "Spring Break First Half (Even Year)",
+      explanation: "On even years, Mother has the first half of Spring Break until the mid-break exchange."
+    },
+    'spring_break_2026_exchange': {
+      provision: 'Provision 16d',
+      title: "Spring Break Mid-Break Exchange",
+      explanation: "Mid-break exchange at 12:00 PM curbside. In even years, Mother drops off to Father."
+    },
+    'spring_break_2026_father_half': {
+      provision: 'Provision 16d',
+      title: "Spring Break Second Half (Even Year)",
+      explanation: "On even years, Father has the second half of Spring Break after the mid-break exchange."
+    },
+    'thanksgiving_2026_start': {
+      provision: 'Provision 16e',
+      title: "Thanksgiving Break 2026",
+      explanation: "Mother picks up from school on the last instruction day before Thanksgiving Break."
+    },
+    'thanksgiving_2026_mother_half': {
+      provision: 'Provision 16e',
+      title: "Thanksgiving First Half (Even Year)",
+      explanation: "On even years, Mother has the first half of Thanksgiving Break including Thanksgiving Day."
+    },
+    'thanksgiving_2026_exchange': {
+      provision: 'Provision 16e',
+      title: "Thanksgiving Mid-Break Exchange",
+      explanation: "Mid-break exchange at 12:00 PM curbside on the day after Thanksgiving."
+    },
+    'thanksgiving_2026_father_half': {
+      provision: 'Provision 16e',
+      title: "Thanksgiving Second Half (Even Year)",
+      explanation: "On even years, Father has the second half of Thanksgiving Break after the mid-break exchange."
+    },
+
+    // Level 3: Summer Schedule
+    'summer_week_1_mother': {
+      provision: 'Provision 14a-f',
+      title: "Summer Week 1 (Mother)",
+      explanation: "8-week summer rotation: Weeks 1, 3, 5, 7 are Mother's. Exchanges at Friday 4:00 PM."
+    },
+    'summer_week_1_end_mother': {
+      provision: 'Provision 14a-f',
+      title: "Summer Week 1 End",
+      explanation: "Mother drops off at 4:00 PM on Friday at camp or Father's home (curbside)."
+    },
+    'summer_week_2_start_mother': {
+      provision: 'Provision 14a-f',
+      title: "Summer Week 2 Start",
+      explanation: "Father drops off at 4:00 PM on Friday at camp or Mother's home (curbside). Week 2 begins."
+    },
+
+    // Level 4: Standard Rotation
+    'monday_mother_return': {
+      provision: 'Provision 12a-b',
+      title: "End of Weekend",
+      explanation: "Monday after Mother's weekend. Mother drops off at school. Father has Monday-Thursday custody."
+    },
+    'monday_mother_holiday_extension': {
+      provision: 'Provision 12d',
+      title: "Monday Holiday Extension",
+      explanation: "This Monday is not an instruction day, so Mother keeps custody until Tuesday school drop-off. This prevents ambiguous Monday exchanges."
+    },
+    'monday_father': {
+      provision: 'Provision 12a-b',
+      title: "Standard Monday (Father)",
+      explanation: "Regular Monday during Father's custody period (Monday 9:00 AM through Thursday pickup)."
+    },
+    'tuesday_mother_holiday_return': {
+      provision: 'Provision 12d',
+      title: "Return After Monday Holiday",
+      explanation: "Previous Monday was not an instruction day, so custody extended to Tuesday drop-off."
+    },
+    'tuesday_father': {
+      provision: 'Provision 12a-b',
+      title: "Standard Tuesday (Father)",
+      explanation: "Regular Tuesday during Father's custody period."
+    },
+    'wednesday_father': {
+      provision: 'Provision 12a-b',
+      title: "Standard Wednesday (Father)",
+      explanation: "Regular Wednesday during Father's custody period."
+    },
+    'thursday_mother': {
+      provision: 'Provision 12a-b',
+      title: "Thursday Overnight (Mother)",
+      explanation: "Mother picks up from school on Thursday and keeps custody through Friday morning. This gives Mother every Thursday overnight plus alternating weekends."
+    },
+    'friday_mother_weekend': {
+      provision: 'Provision 12a-b',
+      title: "Odd Weekend Starts (Mother)",
+      explanation: "This is an odd-numbered weekend (1, 3, 5...). Mother has custody from Thursday pickup through Monday morning drop-off."
+    },
+    'friday_father_weekend': {
+      provision: 'Provision 12a-b',
+      title: "Even Weekend Starts (Father)",
+      explanation: "This is an even-numbered weekend (2, 4, 6...). Mother drops off at school (or 9:00 AM at home if no school). Father has custody through Monday morning."
+    },
+    'friday_fifth_weekend': {
+      provision: 'Provision 14f',
+      title: "5th Weekend (Mother)",
+      explanation: "This month has 5 weekends. The 5th weekend is always Mother's, regardless of the regular odd/even rotation."
+    },
+    'saturday_mother': {
+      provision: 'Provision 12a-b',
+      title: "Mother's Weekend",
+      explanation: "Odd weekend - Mother has custody from Friday afternoon through Monday morning."
+    },
+    'saturday_father': {
+      provision: 'Provision 12a-b',
+      title: "Father's Weekend",
+      explanation: "Even weekend - Father has custody from Friday afternoon through Monday morning."
+    },
+    'saturday_fifth_weekend': {
+      provision: 'Provision 14f',
+      title: "5th Weekend (Mother)",
+      explanation: "This is the 5th weekend of the month, which always goes to Mother."
+    },
+    'sunday_mother': {
+      provision: 'Provision 12a-b',
+      title: "Mother's Weekend",
+      explanation: "Odd weekend - Mother has custody until Monday morning drop-off."
+    },
+    'sunday_father': {
+      provision: 'Provision 12a-b',
+      title: "Father's Weekend",
+      explanation: "Even weekend - Father has custody until Monday morning."
+    },
+    'sunday_fifth_weekend': {
+      provision: 'Provision 14f',
+      title: "5th Weekend (Mother)",
+      explanation: "This is the 5th weekend of the month, which always goes to Mother."
+    }
+  };
+
+  return provisions[rule] || {
+    provision: `Level ${level}`,
+    title: rule,
+    explanation: 'Court order provision applies.'
+  };
+}
+
+/**
+ * Get level explanation
+ */
+function getLevelExplanation(level) {
+  const explanations = {
+    0: "Special Days: These are specific days that always take priority, like Mother's Day, Father's Day, and both parents' birthdays. They override all other schedule rules.",
+    1: "Winter Break Schedule: This is the specific custody arrangement for the winter break period (December-January) spelled out in your court order. It overrides the regular weekly schedule during these dates.",
+    2: "Holiday Rules: These are other major holidays like Halloween, Thanksgiving, and Spring Break that have their own custody arrangements. Each holiday may be split between both parents or assigned to one parent for the full period.",
+    3: "Summer Rotation: During the summer months, custody follows an 8-week rotating schedule that alternates between parents. This gives you longer continuous blocks of time with your daughter.",
+    4: "Regular Schedule: This is your standard weekly custody arrangement when none of the special rules above apply—your regular weekdays and weekends based on the court order."
+  };
+
+  return explanations[level] || 'Court order provision applies.';
+}
+
+/**
  * Create a custody result object
  */
 function createResult(parent, events = [], note = '', level = null, rule = null, flags = {}) {
+  const provisionInfo = getProvisionInfo(level, rule);
+  const levelExplanation = getLevelExplanation(level);
+
   return {
     parent,           // 'mother', 'father', or null
     events,           // Array of {type, title, time, location}
     note,             // Display note
     matchedLevel: level,  // Which level matched (0-4)
     matchedRule: rule,    // Which specific rule matched
+    provision: provisionInfo.provision,  // Court order provision reference
+    provisionTitle: provisionInfo.title, // Provision title
+    provisionExplanation: provisionInfo.explanation, // Detailed explanation
+    levelExplanation,  // What this level means
     flags             // Additional flags (rightOfFirstRefusal, etc.)
   };
 }

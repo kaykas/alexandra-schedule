@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alexandra's Schedule - Rules Engine v2.0</title>
+    <title>Alexandra's Schedule</title>
+    <!-- Block all search engines -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="bingbot" content="noindex, nofollow">
+    <meta name="slurp" content="noindex, nofollow">
+    <meta name="duckduckbot" content="noindex, nofollow">
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -131,17 +137,74 @@
         }
 
         /* DEBUG INFO */
+        /* Court Order Source Info */
         .debug-info {
             margin-top: 10px;
-            padding: 6px;
+            padding: 8px;
             background: var(--debug-bg);
             color: var(--debug-text);
-            font-size: 0.65rem;
-            font-family: 'Courier New', monospace;
-            border-radius: 3px;
-            border-left: 3px solid var(--debug-text);
+            border-radius: 4px;
+            border-left: 4px solid var(--debug-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.4;
         }
-        .debug-info div { margin: 2px 0; }
+
+        .debug-info-level {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(46, 125, 50, 0.2);
+        }
+
+        .debug-info-level::before {
+            content: "▸ ";
+            font-weight: 900;
+            opacity: 0.6;
+        }
+
+        .debug-info-provision,
+        .debug-info-rule,
+        .debug-info-explanation {
+            font-size: 0.68rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .debug-info-provision::before {
+            content: "▾ ";
+            font-weight: 900;
+            opacity: 0.6;
+            margin-top: 1px;
+        }
+
+        .debug-info-rule::before {
+            content: "▪ ";
+            font-weight: 900;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+
+        .debug-info-explanation {
+            font-size: 0.65rem;
+            opacity: 0.85;
+            font-style: italic;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(46, 125, 50, 0.15);
+        }
+
+        .debug-info-label {
+            font-weight: 700;
+            min-width: 75px;
+        }
+
+        .debug-info-value {
+            font-weight: 500;
+            flex: 1;
+        }
 
         @media print {
             body { background: white; padding: 0; }
@@ -160,14 +223,12 @@
 <div class="container">
     <header>
         <h1>Alexandra's Schedule</h1>
-        <div class="badge v2">Rules Engine v2.0</div>
-        <div class="badge">Anchored to Dec 12, 2025 (Mother's Weekend #1)</div>
-        <div class="sub">Dec 2025 – Dec 2026 • Hierarchical Precedence System</div>
+        <div class="sub" id="date-range-subtitle">Loading...</div>
     </header>
 
     <div class="debug-toggle">
         <label>
-            <input type="checkbox" id="debug-mode"> Show Debug Info (Rule Level & Match)
+            <input type="checkbox" id="debug-mode"> View Court Order Source
         </label>
     </div>
 
@@ -194,21 +255,47 @@
         renderCalendar();
     });
 
-    const months = [
-        { y: 2025, m: 11, name: 'December 2025' },
-        { y: 2026, m: 0, name: 'January 2026' },
-        { y: 2026, m: 1, name: 'February 2026' },
-        { y: 2026, m: 2, name: 'March 2026' },
-        { y: 2026, m: 3, name: 'April 2026' },
-        { y: 2026, m: 4, name: 'May 2026' },
-        { y: 2026, m: 5, name: 'June 2026' },
-        { y: 2026, m: 6, name: 'July 2026' },
-        { y: 2026, m: 7, name: 'August 2026' },
-        { y: 2026, m: 8, name: 'September 2026' },
-        { y: 2026, m: 9, name: 'October 2026' },
-        { y: 2026, m: 10, name: 'November 2026' },
-        { y: 2026, m: 11, name: 'December 2026' }
-    ];
+    // Generate months array dynamically starting from current month
+    function generateMonths() {
+        const months = [];
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // Show 12 months starting from current month
+        for (let i = 0; i < 12; i++) {
+            let year = currentYear;
+            let month = currentMonth + i;
+
+            // Handle year rollover
+            if (month > 11) {
+                year += Math.floor(month / 12);
+                month = month % 12;
+            }
+
+            months.push({
+                y: year,
+                m: month,
+                name: `${monthNames[month]} ${year}`
+            });
+        }
+
+        return months;
+    }
+
+    const months = generateMonths();
+
+    // Update subtitle with dynamic date range
+    const firstMonth = months[0];
+    const lastMonth = months[months.length - 1];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const subtitle = document.getElementById('date-range-subtitle');
+    subtitle.textContent = `${monthNames[firstMonth.m]} ${firstMonth.y} – ${monthNames[lastMonth.m]} ${lastMonth.y} • Hierarchical Precedence System`;
 
     const dNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
@@ -266,9 +353,12 @@
                 // Debug info
                 if (debugMode) {
                     html += `<div class="debug-info">
-                        <div><strong>Level ${result.matchedLevel}</strong></div>
-                        <div>Rule: ${result.matchedRule}</div>
-                        <div>Parent: ${result.parent}</div>
+                        <div class="debug-info-level">Level ${result.matchedLevel}: ${result.levelExplanation}</div>
+                        <div class="debug-info-provision">
+                            <span class="debug-info-label">${result.provision}:</span>
+                            <span class="debug-info-value">${result.provisionTitle}</span>
+                        </div>
+                        <div class="debug-info-explanation">${result.provisionExplanation}</div>
                     </div>`;
                 }
 
