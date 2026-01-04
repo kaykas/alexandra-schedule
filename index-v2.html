@@ -841,10 +841,9 @@
                 // Debug info
                 if (debugMode) {
                     html += `<div class="debug-info">
-                        <div class="debug-info-level">Level ${result.matchedLevel}: ${result.levelExplanation}</div>
+                        <div class="debug-info-level">${result.levelExplanation}</div>
                         <div class="debug-info-provision">
-                            <span class="debug-info-label">${result.provision}:</span>
-                            <span class="debug-info-value">${result.provisionTitle}</span>
+                            ${result.provision}: ${result.provisionTitle}
                         </div>
                         <div class="debug-info-explanation">${result.provisionExplanation}</div>
                     </div>`;
