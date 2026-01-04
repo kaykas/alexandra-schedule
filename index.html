@@ -17,15 +17,15 @@
             --text-main: #000000;
             --text-secondary: #6e6e73;
 
-            /* Primary Accent - YOUR Actions (Muted Blue) */
-            --your-action-bg: #E8F0F8;
-            --your-action-border: #3B6FA1;
-            --your-action-text: #1F3A56;
+            /* Primary Accent - YOUR Actions (Rose/Red) */
+            --your-action-bg: #FFE8EC;
+            --your-action-border: #C75B7A;
+            --your-action-text: #7D2D4B;
 
-            /* Secondary Accent - THEIR Actions (Muted Teal) */
-            --their-action-bg: #E6F4F1;
-            --their-action-border: #2F7F73;
-            --their-action-text: #1E4D47;
+            /* Secondary Accent - THEIR Actions (Dark Purple) */
+            --their-action-bg: #F0E8F5;
+            --their-action-border: #6B4C8A;
+            --their-action-text: #3E2A4A;
 
             /* Shared/Transition Events (Soft Plum) - use sparingly */
             --shared-action-bg: #F1EAF4;
@@ -50,8 +50,8 @@
             --debug-border: #D1D1D6;
 
             /* UI accents (buttons, links) */
-            --ui-accent: #3B6FA1;
-            --ui-accent-light: #E8F0F8;
+            --ui-accent: #C75B7A;
+            --ui-accent-light: #FFE8EC;
         }
 
         body {
@@ -119,7 +119,7 @@
         }
 
         .subscribe-btn:hover {
-            background-color: #2F5A8A;
+            background-color: #A84A66;
         }
         .badge {
             display: inline-block; background: #00897b; color: #fff;
@@ -170,7 +170,7 @@
         }
 
         .nav-btn:hover:not(:disabled) {
-            background: var(--ui-accent-light);
+            background: #FFF0F5;
             border-color: var(--ui-accent);
         }
 
@@ -770,7 +770,7 @@
                 const btn = document.getElementById('copy-url-btn');
                 const originalText = btn.textContent;
                 btn.textContent = '✓ Copied!';
-                btn.style.backgroundColor = '#2F7F73'; // Success feedback in muted teal
+                btn.style.backgroundColor = '#6B4C8A'; // Success feedback in purple
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.style.backgroundColor = 'var(--ui-accent)';
