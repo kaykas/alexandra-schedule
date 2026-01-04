@@ -266,6 +266,12 @@
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease;
+        }
+
+        .day:hover {
+            box-shadow: inset 0 0 0 2px var(--ui-accent);
         }
 
         /* DAY STATES - Alexandra's days have subtle feminine background, Father's are white */
@@ -990,6 +996,18 @@
             const cell = document.createElement('div');
             cell.className = `day is-${result.parent}`;
             cell.innerHTML = html;
+
+            // Click to toggle Court Order Source
+            cell.addEventListener('click', (e) => {
+                // Don't toggle if clicking on an action button
+                if (e.target.closest('.action')) return;
+
+                debugMode = !debugMode;
+                debugCheckbox.checked = debugMode;
+                localStorage.setItem('viewCourtOrderSource', debugMode);
+                renderCurrentMonth();
+            });
+
             grid.appendChild(cell);
         }
 
