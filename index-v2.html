@@ -12,33 +12,46 @@
     <meta name="duckduckbot" content="noindex, nofollow">
     <style>
         :root {
-            /* Clean, high-contrast palette inspired by Stendig/Apple Calendar */
+            /* Production color system - Actions get color, states do not */
             --bg-color: #ffffff;
             --text-main: #000000;
             --text-secondary: #6e6e73;
 
-            /* Mother - Bright, clean blue (Apple Calendar inspired) */
-            --my-bg: #ffffff;
-            --my-accent: #007AFF;
-            --my-accent-light: #E5F2FF;
+            /* Primary Accent - YOUR Actions (Muted Blue) */
+            --your-action-bg: #E8F0F8;
+            --your-action-border: #3B6FA1;
+            --your-action-text: #1F3A56;
 
-            /* Father/Away - Neutral gray */
-            --away-bg: #F5F5F7;
-            --away-text: #86868B;
+            /* Secondary Accent - THEIR Actions (Muted Teal) */
+            --their-action-bg: #E6F4F1;
+            --their-action-border: #2F7F73;
+            --their-action-text: #1E4D47;
 
-            /* Actions - Simplified color scheme */
-            --act-pick: #34C759;      /* Green - You Pick Up */
-            --act-drop: #FF9500;      /* Orange - You Drop Off */
-            --act-receive: #86868B;   /* Gray - He Drops Off */
+            /* Shared/Transition Events (Soft Plum) - use sparingly */
+            --shared-action-bg: #F1EAF4;
+            --shared-action-border: #6B4C7A;
+            --shared-action-text: #3E2A4A;
+
+            /* Informational/Status Content (Neutral Gray) */
+            --info-bg: #F3F4F6;
+            --info-text: #6B7280;
+            --info-text-light: #9CA3AF;
+
+            /* Father/Away days - subtle differentiation */
+            --away-bg: #FAFAFA;
 
             /* TBD/Warning */
             --warning-bg: #FFF4E5;
-            --warning-text: #FF9500;
+            --warning-text: #D97706;
 
-            /* Court Order Source - Clean gray box */
-            --debug-bg: #F5F5F7;
+            /* Court Order Source */
+            --debug-bg: #F3F4F6;
             --debug-text: #1D1D1F;
             --debug-border: #D1D1D6;
+
+            /* UI accents (buttons, links) */
+            --ui-accent: #3B6FA1;
+            --ui-accent-light: #E8F0F8;
         }
 
         body {
@@ -165,44 +178,99 @@
             position: relative;
         }
 
-        /* DAY STATES */
-        .is-mother { background-color: white; }
-        .is-mother .num { color: var(--my-accent); font-weight: 900; font-size: 1.2rem; }
-        .is-mother::before { content: ""; display: block; position: absolute; top:0; left:0; right:0; height: 5px; background: var(--my-accent); }
+        /* DAY STATES - States do NOT get color, only subtle differentiation */
+        .is-mother {
+            background-color: white;
+        }
+        .is-mother .num {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
 
-        .is-father { background-color: var(--away-bg); }
-        .is-father .num { color: var(--away-text); font-weight: 600; font-size: 1.1rem; }
-        .is-father .action { opacity: 0.7; }
+        .is-father {
+            background-color: var(--away-bg);
+        }
+        .is-father .num {
+            color: var(--info-text);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .is-father .action {
+            opacity: 0.95;
+        }
 
-        /* ACTIONS */
+        /* ACTIONS - Actions get color, with 2-4px left accent stripe */
         .action {
             margin-top: 5px;
-            padding: 8px;
-            border-radius: 4px;
-            color: white;
+            padding: 10px 12px;
+            border-radius: 6px;
             font-size: 0.75rem;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 3px solid transparent;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .a-pick { background-color: var(--act-pick); color: white; border-left: 4px solid rgba(0, 0, 0, 0.15); }
-        .a-drop { background-color: var(--act-drop); color: white; border-left: 4px solid rgba(0, 0, 0, 0.15); }
-        .a-receive { background-color: var(--away-bg); color: var(--away-text); border: 1px solid var(--away-text); border-left: 4px solid var(--away-text); }
-        .a-tbd { background-color: var(--warning-bg); color: var(--warning-text); border-left: 4px solid var(--warning-text); font-weight: 700; }
+        /* YOUR ACTIONS - Muted Blue */
+        .a-pick {
+            background-color: var(--your-action-bg);
+            color: var(--your-action-text);
+            border-left-color: var(--your-action-border);
+        }
 
-        .a-title { font-weight: 900; text-transform: uppercase; margin-bottom: 3px; font-size: 0.7rem; letter-spacing: 0.5px; }
-        .a-time { font-weight: 700; font-size: 0.9rem; }
-        .a-loc { font-style: italic; opacity: 0.9; font-size: 0.7rem; margin-top: 2px; }
+        .a-drop {
+            background-color: var(--your-action-bg);
+            color: var(--your-action-text);
+            border-left-color: var(--your-action-border);
+        }
+
+        /* THEIR ACTIONS - Muted Teal */
+        .a-receive {
+            background-color: var(--their-action-bg);
+            color: var(--their-action-text);
+            border-left-color: var(--their-action-border);
+        }
+
+        /* TBD/Warning */
+        .a-tbd {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            border-left-color: var(--warning-text);
+            font-weight: 700;
+        }
+
+        .a-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            /* Color inherited from parent action class */
+        }
+
+        .a-time {
+            font-weight: 600;
+            font-size: 0.9rem;
+            /* Color inherited from parent action class */
+        }
+
+        .a-loc {
+            font-size: 0.7rem;
+            margin-top: 3px;
+            opacity: 0.75;
+            /* Color inherited from parent action class */
+        }
 
         .note {
             margin-top: auto;
             text-align: right;
             font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--warning-text);
+            font-weight: 700;
+            color: var(--info-text);
             padding-top: 6px;
             text-transform: uppercase;
+            opacity: 0.8;
         }
 
         /* DEBUG INFO */
@@ -453,73 +521,40 @@
         </label>
     </div>
 
-    <div style="text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid var(--debug-border);">
-        <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 12px;">
-            📅 Subscribe to Calendar
+    <div style="text-align: center; margin: 20px auto; max-width: 500px;">
+        <button id="copy-url-btn" style="
+            background-color: var(--ui-accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            min-height: 44px;
+        ">
+            📅 Copy Calendar Subscription URL
+        </button>
+        <div style="margin-top: 8px; font-size: 0.7rem; color: var(--info-text);">
+            Paste in Google Calendar, Apple Calendar, or Outlook to auto-sync
         </div>
-        <div style="margin-bottom: 16px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-            Get automatic updates when the schedule changes. Subscribe in your calendar app:
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto;">
-            <div>
-                <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; text-align: left;">
-                    Subscription URL:
-                </div>
-                <input
-                    type="text"
-                    readonly
-                    value="https://alexandra-schedule.vercel.app/api/calendar.ics"
-                    id="calendar-url"
-                    style="
-                        width: 100%;
-                        padding: 10px 12px;
-                        border: 1px solid var(--debug-border);
-                        border-radius: 6px;
-                        font-family: 'Monaco', 'Courier New', monospace;
-                        font-size: 0.8rem;
-                        color: var(--text-main);
-                        background: var(--debug-bg);
-                        box-sizing: border-box;
-                        cursor: text;
-                    "
-                    onclick="this.select()"
-                />
-            </div>
-            <button id="copy-url-btn" style="
-                background-color: var(--my-accent);
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 8px;
-                font-size: 0.95rem;
-                font-weight: 600;
-                cursor: pointer;
-                box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
-                transition: all 0.2s ease;
-                min-height: 44px;
-            ">
-                📋 Copy Subscription URL
-            </button>
-        </div>
-        <div style="margin-top: 16px; padding: 12px; background: var(--my-accent-light); border-radius: 8px; text-align: left; font-size: 0.75rem; line-height: 1.6; color: var(--text-main);">
-            <div style="font-weight: 600; margin-bottom: 6px;">How to subscribe:</div>
-            <div style="margin-left: 12px;">
-                <strong>Google Calendar:</strong> Settings → "Add calendar" → "From URL" → Paste URL<br>
-                <strong>Apple Calendar:</strong> File → "New Calendar Subscription" → Paste URL<br>
-                <strong>Outlook:</strong> Calendar → "Add calendar" → "Subscribe from web" → Paste URL
-            </div>
-            <div style="margin-top: 8px; font-style: italic; opacity: 0.8;">
-                Your calendar will automatically update when changes are made (refreshes every 1-24 hours depending on your calendar app).
-            </div>
-        </div>
+        <input
+            type="text"
+            readonly
+            value="https://alexandra-schedule.vercel.app/api/calendar.ics"
+            id="calendar-url"
+            style="display: none;"
+        />
     </div>
 
     <div class="legend">
-        <div class="l-item"><div class="dot" style="background:var(--my-accent)"></div> With Alexandra</div>
-        <div class="l-item"><div class="dot" style="background:var(--away-text)"></div> With Father</div>
-        <div class="l-item"><div class="dot" style="background:var(--act-pick)"></div> Pick Up</div>
-        <div class="l-item"><div class="dot" style="background:var(--act-receive)"></div> He Drops Off</div>
-        <div class="l-item"><div class="dot" style="background:var(--act-drop)"></div> You Drop Off</div>
+        <div class="l-item"><div class="dot" style="background:var(--your-action-border)"></div> Your Actions</div>
+        <div class="l-item"><div class="dot" style="background:var(--their-action-border)"></div> Their Actions</div>
+        <div class="l-item" style="color: var(--info-text); font-size: 0.7rem; margin-left: 20px;">
+            White background = Alexandra's days  •  Light gray = Father's days
+        </div>
     </div>
 
     <div id="calendar-root"></div>
@@ -597,10 +632,10 @@
                 const btn = document.getElementById('copy-url-btn');
                 const originalText = btn.textContent;
                 btn.textContent = '✓ Copied!';
-                btn.style.backgroundColor = '#34C759';
+                btn.style.backgroundColor = '#2F7F73'; // Success feedback in muted teal
                 setTimeout(() => {
                     btn.textContent = originalText;
-                    btn.style.backgroundColor = 'var(--my-accent)';
+                    btn.style.backgroundColor = 'var(--ui-accent)';
                 }, 2000);
             });
         } catch (err) {
