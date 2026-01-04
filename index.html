@@ -12,29 +12,33 @@
     <meta name="duckduckbot" content="noindex, nofollow">
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --text-main: #1a1a1a;
+            /* Clean, high-contrast palette inspired by Stendig/Apple Calendar */
+            --bg-color: #ffffff;
+            --text-main: #000000;
+            --text-secondary: #6e6e73;
 
-            /* Mother */
+            /* Mother - Bright, clean blue (Apple Calendar inspired) */
             --my-bg: #ffffff;
-            --my-accent: #00897b;
+            --my-accent: #007AFF;
+            --my-accent-light: #E5F2FF;
 
-            /* Father/Away */
-            --away-bg: #e0e0e0;
-            --away-text: #757575;
+            /* Father/Away - Neutral gray */
+            --away-bg: #F5F5F7;
+            --away-text: #86868B;
 
-            /* Actions */
-            --act-pick: #00897b;
-            --act-drop: #455a64;
-            --act-receive: #689f38;
+            /* Actions - High contrast, colorful but professional */
+            --act-pick: #007AFF;      /* Bright blue */
+            --act-drop: #34C759;      /* Green */
+            --act-receive: #FF9500;   /* Orange */
 
             /* TBD/Warning */
-            --warning-bg: #fff3e0;
-            --warning-text: #ef6c00;
+            --warning-bg: #FFF4E5;
+            --warning-text: #FF9500;
 
-            /* Debug */
-            --debug-bg: #e8f5e9;
-            --debug-text: #2e7d32;
+            /* Court Order Source - Clean gray box */
+            --debug-bg: #F5F5F7;
+            --debug-text: #1D1D1F;
+            --debug-border: #D1D1D6;
         }
 
         body {
@@ -48,8 +52,20 @@
         .container { max-width: 950px; margin: 0 auto; }
 
         header { text-align: center; margin-bottom: 40px; }
-        h1 { margin: 0; color: #37474f; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 1.8rem; }
-        .sub { color: #546e7a; margin-top: 8px; font-weight: 600; font-size: 0.9rem; }
+        h1 {
+            margin: 0;
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            font-size: 2.5rem;
+        }
+        .sub {
+            color: var(--text-secondary);
+            margin-top: 12px;
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: 0;
+        }
         .badge {
             display: inline-block; background: #00897b; color: #fff;
             padding: 4px 8px; border-radius: 4px; font-size: 0.7rem;
@@ -65,27 +81,80 @@
         .debug-toggle label {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #546e7a;
+            color: var(--text-secondary);
             cursor: pointer;
         }
         .debug-toggle input {
-            margin-right: 5px;
+            margin-right: 8px;
             cursor: pointer;
+            width: 16px;
+            height: 16px;
         }
 
         /* LEGEND */
-        .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .l-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #555; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            border: 1px solid var(--debug-border);
+        }
+        .l-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .dot { width: 14px; height: 14px; border-radius: 50%; }
 
         /* CALENDAR */
-        .month { background: white; border-radius: 8px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e0e0; }
-        .m-head { background: #37474f; color: white; padding: 15px; text-align: center; font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; }
+        .month {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border: 1px solid #E5E5EA;
+        }
+        .m-head {
+            background: var(--text-main);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
 
-        .d-head { display: grid; grid-template-columns: repeat(7, 1fr); background: #eceff1; padding: 10px 0; border-bottom: 1px solid #cfd8dc; }
-        .d-name { text-align: center; font-size: 0.75rem; font-weight: 800; color: #607d8b; }
+        .d-head {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #F5F5F7;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E5EA;
+        }
+        .d-name {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #cfd8dc; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #E5E5EA;
+        }
 
         .day {
             background: white;
@@ -101,8 +170,8 @@
         .is-mother .num { color: var(--my-accent); font-weight: 900; font-size: 1.2rem; }
         .is-mother::before { content: ""; display: block; position: absolute; top:0; left:0; right:0; height: 5px; background: var(--my-accent); }
 
-        .is-father { background-color: #f5f5f5; }
-        .is-father .num { color: #bdbdbd; }
+        .is-father { background-color: var(--away-bg); }
+        .is-father .num { color: var(--away-text); font-weight: 600; font-size: 1.1rem; }
         .is-father .action { opacity: 0.7; }
 
         /* ACTIONS */
@@ -117,10 +186,10 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .a-pick { background-color: var(--act-pick); border-left: 4px solid #004d40; }
-        .a-drop { background-color: var(--act-drop); border-left: 4px solid #263238; }
-        .a-receive { background-color: var(--act-receive); border-left: 4px solid #33691e; }
-        .a-tbd { background-color: var(--warning-bg); color: var(--warning-text); border-left: 4px solid #ef6c00; }
+        .a-pick { background-color: var(--act-pick); border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-drop { background-color: var(--act-drop); border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-receive { background-color: var(--act-receive); border-left: 4px solid rgba(0, 0, 0, 0.15); }
+        .a-tbd { background-color: var(--warning-bg); color: var(--warning-text); border-left: 4px solid var(--warning-text); font-weight: 700; }
 
         .a-title { font-weight: 900; text-transform: uppercase; margin-bottom: 3px; font-size: 0.7rem; letter-spacing: 0.5px; }
         .a-time { font-weight: 700; font-size: 0.9rem; }
@@ -131,7 +200,7 @@
             text-align: right;
             font-size: 0.65rem;
             font-weight: 800;
-            color: #d32f2f;
+            color: var(--warning-text);
             padding-top: 6px;
             text-transform: uppercase;
         }
@@ -206,25 +275,106 @@
             flex: 1;
         }
 
-        /* Mobile Responsive */
+        /* Mobile Responsive - Tablet */
         @media (max-width: 768px) {
-            body { padding: 20px 5px; }
+            body { padding: 20px 10px; }
             .container { max-width: 100%; }
 
-            h1 { font-size: 1.4rem; }
-            .sub { font-size: 0.8rem; }
+            h1 { font-size: 1.8rem; }
+            .sub { font-size: 0.9rem; }
 
             .legend {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+                gap: 16px;
+                padding: 16px;
             }
 
-            .l-item { font-size: 10px; }
+            .l-item {
+                font-size: 0.8rem;
+                min-height: 44px; /* WCAG touch target */
+                align-items: center;
+            }
 
-            .m-head { font-size: 1rem; padding: 12px; }
+            .dot { width: 16px; height: 16px; }
 
-            .d-name { font-size: 0.65rem; }
+            .m-head { font-size: 1.3rem; padding: 16px; }
+
+            .d-name { font-size: 0.7rem; padding: 8px 0; }
+
+            .day {
+                min-height: 160px;
+                padding: 8px;
+            }
+
+            .num { font-size: 1.1rem !important; }
+
+            .action {
+                padding: 10px;
+                font-size: 0.8rem;
+                margin-top: 6px;
+                min-height: 44px; /* WCAG touch target */
+                justify-content: center;
+            }
+
+            .a-title { font-size: 0.7rem; }
+            .a-time { font-size: 0.85rem; }
+            .a-loc { font-size: 0.7rem; }
+
+            .note { font-size: 0.65rem; }
+
+            .debug-info {
+                padding: 10px;
+                margin-top: 10px;
+            }
+
+            .debug-info-level { font-size: 0.75rem; }
+            .debug-info-provision,
+            .debug-info-explanation { font-size: 0.7rem; }
+
+            .debug-toggle {
+                margin: 20px 0;
+                padding: 10px;
+            }
+
+            .debug-toggle label {
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 44px; /* WCAG touch target */
+            }
+
+            .debug-toggle input {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+        }
+
+        /* Mobile Responsive - Phone */
+        @media (max-width: 480px) {
+            body { padding: 15px 5px; }
+
+            h1 { font-size: 1.5rem; }
+            .sub { font-size: 0.85rem; }
+
+            .legend {
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .l-item {
+                font-size: 0.75rem;
+                min-height: 44px; /* WCAG touch target */
+            }
+
+            .dot { width: 14px; height: 14px; }
+
+            .m-head { font-size: 1.1rem; padding: 14px; }
+
+            .d-name {
+                font-size: 0.65rem;
+                padding: 8px 0;
+            }
 
             .day {
                 min-height: 140px;
@@ -234,9 +384,11 @@
             .num { font-size: 1rem !important; }
 
             .action {
-                padding: 6px;
-                font-size: 0.7rem;
-                margin-top: 4px;
+                padding: 8px;
+                font-size: 0.75rem;
+                margin-top: 5px;
+                min-height: 44px; /* WCAG touch target */
+                justify-content: center;
             }
 
             .a-title { font-size: 0.65rem; }
@@ -246,50 +398,27 @@
             .note { font-size: 0.6rem; }
 
             .debug-info {
-                padding: 6px;
+                padding: 8px;
                 margin-top: 8px;
             }
 
             .debug-info-level { font-size: 0.7rem; }
             .debug-info-provision,
-            .debug-info-explanation { font-size: 0.63rem; }
+            .debug-info-explanation { font-size: 0.65rem; }
 
             .debug-toggle {
-                margin: 15px 0;
+                padding: 12px;
             }
 
             .debug-toggle label {
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body { padding: 15px 3px; }
-
-            h1 { font-size: 1.2rem; }
-            .sub { font-size: 0.75rem; }
-
-            .day {
-                min-height: 120px;
-                padding: 4px;
+                font-size: 0.95rem;
+                min-height: 44px; /* WCAG touch target */
             }
 
-            .action {
-                padding: 5px;
-                font-size: 0.65rem;
+            .debug-toggle input {
+                width: 20px;
+                height: 20px;
             }
-
-            .a-title { font-size: 0.6rem; }
-            .a-time { font-size: 0.75rem; }
-            .a-loc { font-size: 0.6rem; }
-
-            .debug-info {
-                padding: 5px;
-            }
-
-            .debug-info-level { font-size: 0.65rem; }
-            .debug-info-provision,
-            .debug-info-explanation { font-size: 0.6rem; }
         }
 
         @media print {
@@ -318,9 +447,30 @@
         </label>
     </div>
 
+    <div style="text-align: center; margin: 20px 0;">
+        <button id="export-calendar-btn" style="
+            background-color: var(--my-accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s ease;
+            min-height: 44px;
+        ">
+            📅 Subscribe to Google Calendar
+        </button>
+        <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-secondary);">
+            Downloads an iCal file you can import into Google Calendar
+        </div>
+    </div>
+
     <div class="legend">
-        <div class="l-item"><div class="dot" style="background:var(--my-accent)"></div> With Mother</div>
-        <div class="l-item"><div class="dot" style="background:#bdbdbd"></div> With Father</div>
+        <div class="l-item"><div class="dot" style="background:var(--my-accent)"></div> With Alexandra</div>
+        <div class="l-item"><div class="dot" style="background:var(--away-text)"></div> With Father</div>
         <div class="l-item"><div class="dot" style="background:var(--act-pick)"></div> Pick Up</div>
         <div class="l-item"><div class="dot" style="background:var(--act-receive)"></div> He Drops Off</div>
         <div class="l-item"><div class="dot" style="background:var(--act-drop)"></div> You Drop Off</div>
@@ -389,6 +539,164 @@
     subtitle.textContent = `${monthNames[firstMonth.m]} ${firstMonth.y} – ${monthNames[lastMonth.m]} ${lastMonth.y} • Hierarchical Precedence System`;
 
     const dNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+    // iCal Export Functionality
+    function generateICalFile() {
+        const icalEvents = [];
+
+        // Generate events for all months
+        months.forEach(cfg => {
+            const daysInMonth = new Date(cfg.y, cfg.m + 1, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(cfg.y, cfg.m, d);
+                const result = window.CustodyEngine.evaluateCustody(date);
+
+                // Add custody period events
+                const dateStr = formatICalDate(date);
+                const nextDay = new Date(date);
+                nextDay.setDate(nextDay.getDate() + 1);
+                const nextDayStr = formatICalDate(nextDay);
+
+                // All-day event for custody
+                if (result.parent === 'mother') {
+                    icalEvents.push({
+                        type: 'custody',
+                        start: dateStr,
+                        end: nextDayStr,
+                        summary: 'Alexandra with Mother',
+                        description: `Court Order Level ${result.matchedLevel}: ${result.levelExplanation}\\n\\n${result.provision}: ${result.provisionTitle}`
+                    });
+                }
+
+                // Add exchange events
+                if (result.events && result.events.length > 0) {
+                    result.events.forEach(e => {
+                        const eventTime = parseEventTime(e.time);
+                        const startDateTime = formatICalDateTime(date, eventTime);
+                        const endTime = new Date(date);
+                        endTime.setHours(eventTime.hours + 1, eventTime.minutes); // 1 hour duration
+                        const endDateTime = formatICalDateTime(endTime, { hours: endTime.getHours(), minutes: endTime.getMinutes() });
+
+                        icalEvents.push({
+                            type: 'event',
+                            start: startDateTime,
+                            end: endDateTime,
+                            summary: e.title,
+                            location: e.location,
+                            description: `${e.title} at ${e.time}\\nLocation: ${e.location}`
+                        });
+                    });
+                }
+            }
+        });
+
+        // Generate iCal file content
+        let icalContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Alexandra Schedule//Custody Calendar//EN',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-CALNAME:Alexandra\'s Custody Schedule',
+            'X-WR-TIMEZONE:America/Los_Angeles',
+            'X-WR-CALDESC:Roberts/Gardenhire Custody Schedule - Hierarchical Rules Engine'
+        ].join('\r\n');
+
+        // Add all events
+        icalEvents.forEach((event, idx) => {
+            const uid = `${event.start}-${idx}@alexandra-schedule.vercel.app`;
+            const timestamp = formatICalDate(new Date());
+
+            if (event.type === 'custody') {
+                icalContent += '\r\n' + [
+                    'BEGIN:VEVENT',
+                    `UID:${uid}`,
+                    `DTSTAMP:${timestamp}`,
+                    `DTSTART;VALUE=DATE:${event.start}`,
+                    `DTEND;VALUE=DATE:${event.end}`,
+                    `SUMMARY:${event.summary}`,
+                    `DESCRIPTION:${event.description}`,
+                    'TRANSP:TRANSPARENT',
+                    'STATUS:CONFIRMED',
+                    'END:VEVENT'
+                ].join('\r\n');
+            } else {
+                icalContent += '\r\n' + [
+                    'BEGIN:VEVENT',
+                    `UID:${uid}`,
+                    `DTSTAMP:${timestamp}`,
+                    `DTSTART:${event.start}`,
+                    `DTEND:${event.end}`,
+                    `SUMMARY:${event.summary}`,
+                    `LOCATION:${event.location}`,
+                    `DESCRIPTION:${event.description}`,
+                    'STATUS:CONFIRMED',
+                    'END:VEVENT'
+                ].join('\r\n');
+            }
+        });
+
+        icalContent += '\r\nEND:VCALENDAR';
+
+        return icalContent;
+    }
+
+    function formatICalDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+    }
+
+    function formatICalDateTime(date, time) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(time.hours).padStart(2, '0');
+        const minutes = String(time.minutes).padStart(2, '0');
+        return `${year}${month}${day}T${hours}${minutes}00`;
+    }
+
+    function parseEventTime(timeStr) {
+        // Parse time strings like "8:15 AM", "3:00 PM", "9:00 AM", "TBD"
+        if (timeStr === 'TBD') {
+            return { hours: 9, minutes: 0 };
+        }
+
+        const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) {
+            return { hours: 9, minutes: 0 };
+        }
+
+        let hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        const meridiem = match[3].toUpperCase();
+
+        if (meridiem === 'PM' && hours !== 12) {
+            hours += 12;
+        } else if (meridiem === 'AM' && hours === 12) {
+            hours = 0;
+        }
+
+        return { hours, minutes };
+    }
+
+    function downloadICalFile() {
+        const icalContent = generateICalFile();
+        const blob = new Blob([icalContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'alexandra-custody-schedule.ics';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    // Add event listener to export button
+    document.getElementById('export-calendar-btn').addEventListener('click', downloadICalFile);
 
     function renderCalendar() {
         root.innerHTML = '';
